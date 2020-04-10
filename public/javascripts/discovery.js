@@ -9,9 +9,9 @@ function search_discovery() {
     });
 
     request.done((response) => {
-        console.log(response)
+        //console.log(response)
         for(var i = 0; i<response.result.results.length; i++){
-          console.log(response.result.results[i])
+          //console.log(response.result.results[i])
           $("div#results_search").append(response.result.results[i].text + "<br /><br />");
         }
         //document.getElementById("results_search").innerHTML = response;
@@ -20,7 +20,7 @@ function search_discovery() {
     });
 
     request.fail((error) => {
-        console.log(error);
+        //console.log(error);
         //document.getElementById("results_search").innerHTML = "error";
         $("div#results_search").append(error);
     });
