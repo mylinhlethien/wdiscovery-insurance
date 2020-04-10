@@ -20,15 +20,17 @@ router.get('/', function(req, res, next) {
 });
 
 
-router.get('/discovery', function(req, res, next) {
+router.post('/discovery', function(req, res, next) {
+  console.log(req.body)
   discovery.query(
     {
       environmentId: process.env.ENVIRONMENT_ID,
       collectionId: process.env.COLLECTION_ID,
       configurationId: process.env.CONFIGURATION_ID,
-      query: "assurance habitation"
+      query: req.body.text
     })
     .then(response => {
+      console.log(response)
       //console.log(JSON.stringify(response.result, null, 2));
       res.json({result: response.result, success: true});
     })
