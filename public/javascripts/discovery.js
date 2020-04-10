@@ -1,10 +1,6 @@
 function search_discovery() {
 
     var text = document.getElementById("input_search").value;
-    var fd = new FormData();
-    fd.append('text', text);
-
-    console.log(fd)
 
     var request = $.ajax({
         method: 'POST',
