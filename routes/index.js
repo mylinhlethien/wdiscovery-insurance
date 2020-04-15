@@ -21,13 +21,16 @@ router.get('/', function(req, res, next) {
 
 
 router.post('/discovery', function(req, res, next) {
-  console.log(req.body)
+
   discovery.query(
     {
       environmentId: process.env.ENVIRONMENT_ID,
       collectionId: process.env.COLLECTION_ID,
       configurationId: process.env.CONFIGURATION_ID,
-      query: req.body.text
+      passages: true,
+      highlight: true,
+      deduplicate: false,
+      query: req.body.text ? `enriched_text.concepts.text:"${req.body.text}"` : ""
     })
     .then(response => {
       console.log(response)

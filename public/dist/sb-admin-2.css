@@ -206,6 +206,8 @@ figure {
 img {
   vertical-align: middle;
   border-style: none;
+  width: 70px;
+  border-radius: 12px;
 }
 
 svg {
@@ -252,6 +254,9 @@ textarea {
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
+  width: 100%;
+  border-radius: 8px;
+  color: var(--primary);
 }
 
 button,
