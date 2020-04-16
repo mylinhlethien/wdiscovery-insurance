@@ -30,7 +30,8 @@ router.post('/discovery', function(req, res, next) {
       passages: true,
       highlight: true,
       deduplicate: false,
-      query: req.body.text ? `enriched_text.concepts.text:"${req.body.text}"` : ""
+      //query: req.body.text ? `enriched_text.entities.text:"${req.body.text}"` : ""
+      query: req.body.text
     })
     .then(response => {
       console.log(response)

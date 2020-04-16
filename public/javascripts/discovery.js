@@ -9,14 +9,11 @@ function search_discovery() {
     });
 
     request.done((response) => {
-        //console.log(response)
+        $("div#number_results").append("Il y a " + response.result.results.length + " résultats de recherche :" + "<br /><br />");
         for(var i = 0; i<response.result.results.length; i++){
           //console.log(response.result.results[i])
           $("div#results_search").append(response.result.results[i].text + "<br /><br />");
         }
-        //document.getElementById("results_search").innerHTML = response;
-        //$("div#results_search").append(response);
-        //console.log(response);
     });
 
     request.fail((error) => {
