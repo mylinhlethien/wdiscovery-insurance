@@ -24,3 +24,10 @@ function search_discovery() {
     });
 
 }
+
+function reset() {
+    
+    document.getElementById('number_results').innerHTML = "";
+    document.getElementById('results_search').innerHTML = "";
+
+}

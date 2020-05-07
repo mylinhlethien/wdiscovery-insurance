@@ -172,6 +172,7 @@
               </div>
 
               <input id="input_search" type="text" placeholder="Search..." onchange="search_discovery()">
+              <button onclick="reset()">Effacer</button>
 
 
               <div class="card shadow mb-4"> <div class="card-header py-3">
@@ -200,6 +201,8 @@
                 <div class="card-body text-gray-800">
                   <p>Tone Analyzer</p>
                   <div id="tone_results"></div>
+                  <p>Mots clés de la conversation</p>
+                  <div id="chartdiv"></div>
                 </div>
               </div>
 
@@ -253,9 +256,10 @@
   <script src="./dist/socket.io-client/socket.io.js"></script>
   <script type="text/javascript"></script>
 
-    <script src="./javascripts/discovery.js"></script>
-    <script src="./javascripts/toneanalyzer.js"></script>
-
+  <!-- Fichiers JS -->
+  <script src="./javascripts/discovery.js"></script>
+  <script src="./javascripts/toneanalyzer.js"></script>
+  <script src="./javascripts/tagcloud.js"></script>
 
 </body>
 
