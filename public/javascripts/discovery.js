@@ -5,7 +5,8 @@ function search_discovery() {
     var request = $.ajax({
         method: 'POST',
         url: 'http://localhost:3000/discovery',
-        data: JSON.stringify({ "text": text }),
+        //data: JSON.stringify({"text": text})
+        data : text
     });
 
     request.done((response) => {
