@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const multer = require('multer');
-const upload = multer();
-var fs = require('fs');
+//const upload = multer();
+//var fs = require('fs');
 
 const ToneAnalyzerV3 = require('ibm-watson/tone-analyzer/v3');
 const DiscoveryV1 = require('ibm-watson/discovery/v1');
@@ -56,9 +56,20 @@ router.post('/discovery', function(req, res, next) {
     });
 });
 
+discovery.getConfiguration({
+  environmentId: process.env.ENVIRONMENT_ID,
+  collectionId: process.env.COLLECTION_ID,
+  configurationId: process.env.CONFIGURATION_ID,
+})
+  .then(configuration => {
+    //console.log(JSON.stringify(configuration.result.enrichments[0].options.features['keywords'], null, 2));
+  })
+  .catch(err => {
+    console.log('error:', err);
+  });
+
 router.post('/toneanalyzer', function(req, res, next) {
 
-  //console.log(req.body);
   toneAnalyzer.tone(
     {
       toneInput: Object.keys(req.body)[0],

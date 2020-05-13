@@ -10,11 +10,11 @@ function tone_analyzer() {
     });
 
     request.done((response) => {
-        /*for(var i = 0; i<response.result.results.length; i++){
-          console.log(response.result.results[i])
-          $("div#tone_results").append(response.result.results[i].text + "<br /><br />");
-        }*/
-        $("div#tone_results").append(response.result);
+        for(var i = 0; i<response.result.length; i++){
+          console.log(response.result[i])
+          $("div#tone_results").append(response.result[i] + "<br /><br />");
+        }
+        //$("div#tone_results").append(response.result);
     });
 
     request.fail((error) => {
