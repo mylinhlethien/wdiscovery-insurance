@@ -10,11 +10,11 @@ function tone_analyzer() {
     });
 
     request.done((response) => {
-        for(var i = 0; i<response.result.length; i++){
-          console.log(response.result[i])
-          $("div#tone_results").append(response.result[i] + "<br /><br />");
+        for(var i = 0; i<response.result.tones.length; i++){
+          if (response.result.tones[i].score > 0.8) {
+            $("div#tone_results").append(response.result.tones[i].tone_name + "<br/>");
+          }
         }
-        //$("div#tone_results").append(response.result);
     });
 
     request.fail((error) => {

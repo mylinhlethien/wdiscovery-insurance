@@ -10,10 +10,10 @@ function search_discovery() {
     });
 
     request.done((response) => {
-        $("div#number_results").append("Il y a " + response.result.results.length + " résultats de recherche :" + "<br /><br />");
-        for(var i = 0; i<response.result.results.length; i++){
+        $("div#number_results").append("Il y a " + response.result.length + " résultats de recherche :" + "<br /><br />");
+        for(var i = 0; i<response.result.length; i++){
           //console.log(response.result.results[i])
-          $("div#results_search").append(response.result.results[i].text + "<br /><br />");
+          $("div#results_search").append(response.result[i].passage_text + "<br /><br />");
         }
     });
 
@@ -27,6 +27,7 @@ function search_discovery() {
 
 function reset() {
     
+    document.getElementById('input_search').innerHTML = "";
     document.getElementById('number_results').innerHTML = "";
     document.getElementById('results_search').innerHTML = "";
 
