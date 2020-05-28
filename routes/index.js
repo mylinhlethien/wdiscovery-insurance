@@ -47,8 +47,8 @@ router.post('/discovery', function(req, res, next) {
       query: Object.keys(req.body)[0]
     })
     .then(response => {
-      console.log(JSON.stringify(response.result.passages, null, 2));
-      res.json({result: response.result.passages, success: true});
+      //console.log(JSON.stringify(response.result, null, 2));
+      res.json({result: response.result, success: true});
     })
     .catch(err => {
       console.log(err);

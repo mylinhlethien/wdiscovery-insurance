@@ -10,11 +10,18 @@ function search_discovery() {
     });
 
     request.done((response) => {
-        $("div#number_results").append("Il y a " + response.result.length + " résultats de recherche :" + "<br /><br />");
-        for(var i = 0; i<response.result.length; i++){
+        $("div#number_results").append("Il y a " + response.result.results.length + " résultats de recherche :" + "<br /><br />");
+        for(var i = 0; i<response.result.results.length; i++){
           //console.log(response.result.results[i])
-          $("div#results_search").append(response.result[i].passage_text + "<br /><br />");
+          $("div#results_search").append(response.result.results[i].title + "<br /><br />" + response.result.results[i].text + "<br /><br />");
         }
+
+        $("div#number_passages").append("Il y a " + response.result.results.length + " passages :" + "<br /><br />");
+        for(var i = 0; i<response.result.passages.length; i++){
+          //console.log(response.result.results[i])
+          $("div#results_passages").append(response.result.passages[i].passage_text + "<br /><br />" + response.result.passages[i].passage_text + "<br /><br />");
+        }
+
     });
 
     request.fail((error) => {

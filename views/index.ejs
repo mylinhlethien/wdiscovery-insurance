@@ -171,17 +171,58 @@
                 </div>
               </div>
 
-              <input id="input_search" type="text" placeholder="Search..." onchange="search_discovery()">
-              <button onclick="reset()">Effacer</button>
-
+              <input id="input_search" type="text" placeholder="Query" onchange="search_discovery()">
 
               <div class="card shadow mb-4"> <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Next Best Actions</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Requêtes</h6>
+              </div>
+                <div class="card-body text-gray-800">
+
+                  <div class="field">
+                    <label>Field</label>
+                    <select class="select">
+                      <!--<input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">-->
+                      <option value="test">test</option>
+                      <option>test</option>
+                      <option>test</option>
+                      <option>test</option>
+                    </select>
+                  </div>
+
+                  <div class="operator">
+                    <label>Operator</label>
+                    <select class="select">
+                      <!--<input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">-->
+                      <option value="test">is</option>
+                      <option>is not</option>
+                      <option>contains</option>
+                      <option>does not contain</option>
+                    </select>
+                  </div>
+
+                  <div class="value">
+                    <label>Value</label>
+                    <select class="select">
+                      <!--<input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">-->
+                      <option value="test">test</option>
+                      <option>test</option>
+                      <option>test</option>
+                      <option>test</option>
+                    </select>
+                  </div>
+
+                  <button>Rechercher</button>
+                </div>
+              </div>
+
+              <button onclick="reset()">Effacer</button>
+
+              <div class="card shadow mb-4"> <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Résultats recherche Discovery - documents</h6>
               </div>
                 <div class="card-body text-gray-800">
                   <div id="number_results"> </div>
                   <div id="results_search">  </div>
-
                 </div>
               </div>
 
@@ -244,6 +285,15 @@
                   <a href="#" style="font-size: 3.16ex">word</a>
                   </div>
                 
+                </div>
+              </div>
+
+              <div class="card shadow mb-4"> <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Résultats recherche Discovery - passages</h6>
+              </div>
+                <div class="card-body text-gray-800">
+                  <div id="number_passages"> </div>
+                  <div id="results_passages">  </div>
                 </div>
               </div>
 
