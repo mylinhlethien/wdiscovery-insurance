@@ -11,10 +11,10 @@ function tone_analyzer() {
 
     request.done((response) => {
         for(var i = 0; i<response.result.tones.length; i++){
-          if (response.result.tones[i].score > 0.8) {
-            $("div#tone_results").append(response.result.tones[i].tone_name + "<br/>");
-          }
+          console.log(response.result.tones[i])
+          $("div#tone_results").append("Score: "+ response.result.tones[i].score + ", Tone: " + response.result.tones[i].tone_name + "<br /><br />");
         }
+        //$("div#tone_results").append(response.result);
     });
 
     request.fail((error) => {

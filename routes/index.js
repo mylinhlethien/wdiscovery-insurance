@@ -47,7 +47,7 @@ router.post('/discovery', function(req, res, next) {
       query: Object.keys(req.body)[0]
     })
     .then(response => {
-      //console.log(JSON.stringify(response.result, null, 2));
+      //console.log(JSON.stringify(response.result.results, null, 2));
       res.json({result: response.result, success: true});
     })
     .catch(err => {
@@ -56,6 +56,17 @@ router.post('/discovery', function(req, res, next) {
     });
 });
 
+/*discovery.getConfiguration({
+  environmentId: process.env.ENVIRONMENT_ID,
+  collectionId: process.env.COLLECTION_ID,
+  configurationId: process.env.CONFIGURATION_ID,
+})
+  .then(configuration => {
+    //console.log(JSON.stringify(configuration.result.enrichments[0].options.features['keywords'], null, 2));
+  })
+  .catch(err => {
+    console.log('error:', err);
+  });*/
 
 router.post('/toneanalyzer', function(req, res, next) {
 
@@ -66,6 +77,7 @@ router.post('/toneanalyzer', function(req, res, next) {
     })
     .then(response => {
       //console.log(response.result.document_tone.tone_categories[0]);
+      //console.log(JSON.stringify(response.result, null, 2));
       res.json({result: response.result.document_tone.tone_categories[0], success: true});
     })
     .catch(err => {
