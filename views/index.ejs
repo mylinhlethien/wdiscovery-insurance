@@ -252,9 +252,9 @@
 
                   <div class="field">
                     <label>Field</label>
-                    <select class="select">
+                    <select id="field" class="select">
                       <!--<input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">-->
-                      <option value="test">Entity Types</option>
+                      <option>Entity Types</option>
                       <option>Entities</option>
                       <option>Categories</option>
                       <option>Concepts</option>
@@ -264,9 +264,9 @@
 
                   <div class="operator">
                     <label>Operator</label>
-                    <select class="select">
+                    <select id="operator" class="select">
                       <!--<input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">-->
-                      <option value="test">is</option>
+                      <option>is</option>
                       <option>is not</option>
                       <option>contains</option>
                       <option>does not contain</option>
@@ -275,16 +275,10 @@
 
                   <div class="value">
                     <label>Value</label>
-                    <select class="select">
-                      <!--<input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">-->
-                      <option value="test">test</option>
-                      <option>test</option>
-                      <option>test</option>
-                      <option>test</option>
-                    </select>
+                    <input id="input_value" type="text" placeholder="Enter Value">
                   </div>
 
-                  <button>Rechercher</button>
+                  <button onclick="buildQueries()">Rechercher</button>
                 </div>
               </div>
 

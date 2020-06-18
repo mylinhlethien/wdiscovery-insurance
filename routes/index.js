@@ -37,7 +37,6 @@ router.post('/discovery', function(req, res, next) {
       passages: true,
       highlight: true,
       deduplicate: false,
-      //count: 5,
       //query: req.body.text ? `enriched_text.entities.text:"${req.body.text}"` : ""
       /*aggregation: '[term(enriched_text.entities.text).term(enriched_text.sentiment.document.label),' +
       'term(enriched_text.categories.label).term(enriched_text.sentiment.document.label),' +
