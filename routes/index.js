@@ -1,8 +1,12 @@
 var express = require('express');
 var router = express.Router();
-const multer = require('multer');
+//const multer = require('multer');
 //const upload = multer();
-//var fs = require('fs');
+const fs = require('fs');
+
+let rawdata = fs.readFileSync('./tablev2.json');
+let table1 = JSON.parse(rawdata);
+console.log(table1);
 
 const ToneAnalyzerV3 = require('ibm-watson/tone-analyzer/v3');
 const DiscoveryV1 = require('ibm-watson/discovery/v1');
@@ -46,7 +50,7 @@ router.post('/discovery', function(req, res, next) {
       query: Object.keys(req.body)[0]
     })
     .then(response => {
-      //console.log(JSON.stringify(response.result.results, null, 2));
+      //console.log(JSON.stringify(response.result, null, 2));
       res.json({result: response.result, success: true});
     })
     .catch(err => {
@@ -54,18 +58,6 @@ router.post('/discovery', function(req, res, next) {
       //res.json({error: err, success: false});
     });
 });
-
-/*discovery.getConfiguration({
-  environmentId: process.env.ENVIRONMENT_ID,
-  collectionId: process.env.COLLECTION_ID,
-  configurationId: process.env.CONFIGURATION_ID,
-})
-  .then(configuration => {
-    //console.log(JSON.stringify(configuration.result.enrichments[0].options.features['keywords'], null, 2));
-  })
-  .catch(err => {
-    console.log('error:', err);
-  });*/
 
 router.post('/toneanalyzer', function(req, res, next) {
 
