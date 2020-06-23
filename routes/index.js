@@ -4,10 +4,6 @@ var router = express.Router();
 //const upload = multer();
 const fs = require('fs');
 
-let rawdata = fs.readFileSync('./tablev2.json');
-let table1 = JSON.parse(rawdata);
-console.log(table1);
-
 const ToneAnalyzerV3 = require('ibm-watson/tone-analyzer/v3');
 const DiscoveryV1 = require('ibm-watson/discovery/v1');
 const { IamAuthenticator } = require('ibm-watson/auth');
@@ -57,6 +53,7 @@ router.post('/discovery', function(req, res, next) {
       console.log(err);
       //res.json({error: err, success: false});
     });
+
 });
 
 router.post('/toneanalyzer', function(req, res, next) {

@@ -12040,9 +12040,9 @@ body.sidebar-toggled footer.sticky-footer {
   content: "\2796"; /* Unicode character for "minus" sign (-) */
 }
 
-/*.active, .accordion:hover {
+.active, .accordion:hover {
   background-color: #ccc; 
-}*/
+}
 
 .panel {
   padding: 0 18px;

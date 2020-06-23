@@ -18,7 +18,7 @@ function search_discovery() {
                 //$("div#results_search").append("No Title :"+ "<br />" + response.result.results[i].highlight.text + "<br /><br />");
                 $("div#results_search").append("<button class=\"accordion\">" + "No Title" + "</button>" +
                 "<div class=\"panel\">" + 
-                "<p>" + response.result.results[i].highlight.text +"</p>" + 
+                "<p>" + response.result.results[i].highlight.text +"</p>" +
                 "</div>");
             }
             else {
@@ -39,9 +39,9 @@ function search_discovery() {
                 "</div>");
         }
 
+        //Animation  Accordion
         var acc = document.getElementsByClassName("accordion");
         var i;
-
         for (i = 0; i < acc.length; i++) {
         acc[i].addEventListener("click", function() {
             this.classList.toggle("active");
@@ -53,6 +53,7 @@ function search_discovery() {
             }
         });
         }
+
     });
 
     request.fail((error) => {
@@ -96,17 +97,8 @@ function reset() {
     document.getElementById('tone_results').innerHTML = "";
 }
 
-var acc = document.getElementsByClassName("accordion");
-var i;
+function getDocumentTitle(document_id) {
+    var document_title='';
 
-for (i = 0; i < acc.length; i++) {
-  acc[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var panel = this.nextElementSibling;
-    if (panel.style.display === "block") {
-      panel.style.display = "none";
-    } else {
-      panel.style.display = "block";
-    }
-  });
+    return document_title;
 }
