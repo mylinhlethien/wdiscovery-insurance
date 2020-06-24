@@ -57,8 +57,6 @@ function search_discovery() {
     });
 
     request.fail((error) => {
-        //console.log(error);
-        //document.getElementById("results_search").innerHTML = "error";
         $("div#results_search").append(error);
     });
 }
@@ -139,24 +137,40 @@ function buildQueries() {
         for(var i = 0; i<response.result.results.length; i++){
             //if the document has no title
             if (response.result.results[i].title == undefined) {
-                //$("div#results_search").append("No Title :"+ "<br />" + response.result.results[i].highlight.text + "<br /><br />");
-                $("div#results_search").append("<button class=\"accordion\">" + "No Title" + "</button>" +
-                "<div class=\"panel\">" + 
-                "<p>" + response.result.results[i].highlight.text +"</p>" +
-                "</div>");
+                //if there's no highlight
+                if (response.result.results[i].highlight.text == undefined) {
+                    $("div#results_search").append("<button class=\"accordion\">" + "No Title" + "</button>" +
+                    "<div class=\"panel\">" + 
+                    "<p>" + response.result.results[i].text +"</p>" +
+                    "</div>");
+                }
+                else {
+                    $("div#results_search").append("<button class=\"accordion\">" + "No Title" + "</button>" +
+                    "<div class=\"panel\">" + 
+                    "<p>" + response.result.results[i].highlight.text +"</p>" +
+                    "</div>");
+                }   
             }
             else {
-                //$("div#results_search").append(response.result.results[i].title + " :"+ "<br />" + response.result.results[i].highlight.text + "<br /><br />");
-                $("div#results_search").append("<button class=\"accordion\">" + response.result.results[i].title + "</button>" +
-                "<div class=\"panel\">" + 
-                "<p>" + response.result.results[i].highlight.text +"</p>" + 
-                "</div>");
+                //if there's no highlight
+                if (response.result.results[i].highlight.text == undefined) {
+                    $("div#results_search").append("<button class=\"accordion\">" + response.result.results[i].title + "</button>" +
+                    "<div class=\"panel\">" + 
+                    "<p>" + response.result.results[i].text +"</p>" + 
+                    "</div>");
+                }
+                else {
+                    $("div#results_search").append("<button class=\"accordion\">" + response.result.results[i].title + "</button>" +
+                    "<div class=\"panel\">" + 
+                    "<p>" + response.result.results[i].highlight.text +"</p>" + 
+                    "</div>");
+                }
+                
             }
         }
 
         $("div#number_passages").append("Il y a " + response.result.passages.length + " passages :" + "<br /><br />");
         for(var i = 0; i<response.result.passages.length; i++) {
-            //$("div#results_passages").append( "Document id: "+ response.result.passages[i].document_id + "<br/> Field: " + response.result.passages[i].field + "<br />"+ response.result.passages[i].passage_text + "<br /><br /> <br/>");
             $("div#results_passages").append("<button class=\"accordion\">" + "Document id: "+ response.result.passages[i].document_id + "<br/> Field: " + response.result.passages[i].field + "</button>" +
                 "<div class=\"panel\">" + 
                 "<p>" + response.result.passages[i].passage_text +"</p>" + 
@@ -182,8 +196,6 @@ function buildQueries() {
     });
 
     request.fail((error) => {
-        //console.log(error);
-        //document.getElementById("results_search").innerHTML = "error";
         $("div#results_search").append(error);
     });
 }
