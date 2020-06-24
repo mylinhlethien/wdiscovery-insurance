@@ -32,7 +32,7 @@
     <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-success sidebar sidebar-dark  toggled" id="accordionSidebar">
 
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.ejs">
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
         <div class="sidebar-brand-icon rotate-n-15">
           <i class="fas fa-laugh-wink"></i>
         </div>
@@ -169,10 +169,20 @@
                   <p> Sujet : Assurance habitation </p>
 
                 </div>
-              </div> -->
+              </div>-->
 
-              <input id="input_search" type="text" placeholder="Search..." onchange="search_discovery(); tone_analyzer()">
-              <button onclick="reset()">Effacer</button>
+              <div class="card shadow mb-4"> <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Natural Language Query</h6>
+              </div>
+                <div class="card-body text-gray-800">
+                  <input id="input_search" type="text" placeholder="Search..." onchange="search_discovery(); tone_analyzer()">
+                  <button onclick="reset()">Effacer</button>
+
+                </div>
+              </div>
+
+                
+
 
               <div class="card shadow mb-4"> <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">Tone Analyzer</h6>

@@ -43,10 +43,41 @@ router.post('/discovery', function(req, res, next) {
       'term(enriched_text.concepts.text).term(enriched_text.sentiment.document.label),' +
       'term(enriched_text.keywords.text).term(enriched_text.sentiment.document.label),' +
       'term(enriched_text.entities.type).term(enriched_text.sentiment.document.label)]',*/
-      query: Object.keys(req.body)[0]
+      naturalLanguageQuery: Object.keys(req.body)[0]
     })
     .then(response => {
       //console.log(JSON.stringify(response.result, null, 2));
+      res.json({result: response.result, success: true});
+    })
+    .catch(err => {
+      console.log(err);
+      //res.json({error: err, success: false});
+    });
+
+});
+
+router.post('/discoveryqueries', function(req, res, next) {
+
+  //console.log(Object.values(req.body)[0], Object.values(req.body)[1], Object.values(req.body)[2]);
+
+  discovery.query(
+    {
+      environmentId: process.env.ENVIRONMENT_ID,
+      collectionId: process.env.COLLECTION_ID,
+      configurationId: process.env.CONFIGURATION_ID,
+      passages: true,
+      highlight: true,
+      deduplicate: false,
+      //query: req.body.text ? `enriched_text.entities.text:"${req.body.text}"` : ""
+      /*aggregation: '[term(enriched_text.entities.text).term(enriched_text.sentiment.document.label),' +
+      'term(enriched_text.categories.label).term(enriched_text.sentiment.document.label),' +
+      'term(enriched_text.concepts.text).term(enriched_text.sentiment.document.label),' +
+      'term(enriched_text.keywords.text).term(enriched_text.sentiment.document.label),' +
+      'term(enriched_text.entities.type).term(enriched_text.sentiment.document.label)]',*/
+      query: Object.values(req.body)[0] + Object.values(req.body)[1] + Object.values(req.body)[2]
+    })
+    .then(response => {
+      //console.log(JSON.stringify(response.result.results, null, 2));
       res.json({result: response.result, success: true});
     })
     .catch(err => {
