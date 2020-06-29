@@ -3,6 +3,7 @@ var router = express.Router();
 //const multer = require('multer');
 //const upload = multer();
 const fs = require('fs');
+const MongoClient = require("mongodb").MongoClient;
 
 const ToneAnalyzerV3 = require('ibm-watson/tone-analyzer/v3');
 const DiscoveryV1 = require('ibm-watson/discovery/v1');
@@ -26,6 +27,81 @@ router.get('/', function(req, res, next) {
   res.render('index');
 });
 
+router.post('/mongodb', function(req, res, next) {
+
+  let connectionString = "mongodb://admin:demoinsurance@10fa5bae-7e7c-44cc-a882-b0bd82c31371-0.br38q28f0334iom5lv4g.databases.appdomain.cloud:32019,10fa5bae-7e7c-44cc-a882-b0bd82c31371-1.br38q28f0334iom5lv4g.databases.appdomain.cloud:32019/ibmclouddb?authSource=admin&replicaSet=replset"
+
+  let options = {
+    tls: true,
+    tlsCAFile: `./certificate.crt`,
+    useUnifiedTopology: true 
+  };
+
+  // connects to a MongoDB database
+  MongoClient.connect(connectionString, options, function (err, db) {
+    if (err) {
+        console.log(err);
+    } else {
+      // lists the databases that exist in the deployment
+        /*db.db('example').admin().listDatabases(function(err, dbs) {
+            console.log(dbs.databases);
+            db.close();
+        });*/
+
+        var dbo = db.db("insurance");
+        var couverture = Object.keys(req.body)[0];
+
+        dbo.collection("tables").aggregate([
+          { $project: {
+              "_id": 0,
+              "body_cells.text" : 1,
+              "body_cells.row_index_begin" :1,
+              "body_cells.column_header_texts" : 1
+            }},
+          { $unwind: {path: "$body_cells"} },
+          { $match: {
+              "body_cells.text" : couverture
+            }}
+        ])
+        .toArray(function(err, result) {
+          if (err) throw err;
+          if (result[0] == undefined) {
+            res.send(result);
+          }
+          else {
+            var row_index_begin = result[0].body_cells.row_index_begin;
+
+            dbo.collection("tables").aggregate([
+              { $project: {
+                  "_id": 0,
+                  "body_cells.text" : 1,
+                  "body_cells.row_index_begin" :1,
+                  "body_cells.column_header_texts" : 1
+                }},
+              { $unwind: {path: "$body_cells"} },
+              { $match: {
+                  "body_cells.row_index_begin" : row_index_begin
+                }},
+              { $group: {
+                  _id: "$body_cells.row_index_begin",
+                  body_cells : {$push : { text : "$body_cells.text", column_header_texts : "$body_cells.column_header_texts"}}
+                }}
+            ])
+            .toArray(function(err, result) {
+              if (err) throw err;
+              console.log(result[0].body_cells);
+              res.send(result[0].body_cells);
+              db.close();         
+            });
+          }
+          
+        });      
+    }
+  });
+
+
+});
+
 
 router.post('/discovery', function(req, res, next) {
 
@@ -37,13 +113,8 @@ router.post('/discovery', function(req, res, next) {
       passages: true,
       highlight: true,
       deduplicate: false,
-      //query: req.body.text ? `enriched_text.entities.text:"${req.body.text}"` : ""
-      /*aggregation: '[term(enriched_text.entities.text).term(enriched_text.sentiment.document.label),' +
-      'term(enriched_text.categories.label).term(enriched_text.sentiment.document.label),' +
-      'term(enriched_text.concepts.text).term(enriched_text.sentiment.document.label),' +
-      'term(enriched_text.keywords.text).term(enriched_text.sentiment.document.label),' +
-      'term(enriched_text.entities.type).term(enriched_text.sentiment.document.label)]',*/
-      naturalLanguageQuery: Object.keys(req.body)[0]
+      //naturalLanguageQuery: Object.keys(req.body)[0]
+      query: Object.keys(req.body)[0]
     })
     .then(response => {
       //console.log(JSON.stringify(response.result, null, 2));

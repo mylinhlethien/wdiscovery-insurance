@@ -209,6 +209,7 @@ function reset() {
     document.getElementById('results_passages').innerHTML = "";
     document.getElementById('tone_results').innerHTML = "";
     document.getElementById("input_value").value="";
+    document.getElementById('results_mongodb').innerHTML = "";
 }
 
 function getDocumentTitle(document_id) {
