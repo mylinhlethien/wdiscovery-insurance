@@ -2,6 +2,8 @@
 function search_discovery() {
     var text = document.getElementById("input_search").value;
 
+    let list = [];
+
     var request = $.ajax({
         method: 'POST',
         url: 'http://localhost:3000/discovery',
@@ -32,12 +34,39 @@ function search_discovery() {
 
         $("div#number_passages").append("Il y a " + response.result.passages.length + " passages :" + "<br /><br />");
         for(var i = 0; i<response.result.passages.length; i++) {
-            //$("div#results_passages").append( "Document id: "+ response.result.passages[i].document_id + "<br/> Field: " + response.result.passages[i].field + "<br />"+ response.result.passages[i].passage_text + "<br /><br /> <br/>");
-            $("div#results_passages").append("<button class=\"accordion\">" + "Document id: "+ response.result.passages[i].document_id + "<br/> Field: " + response.result.passages[i].field + "</button>" +
+            $("div#results_passages").prepend("<button class=\"accordion\">" + getDocumentTitle(response.result.passages[i].document_id) + "<br/> Field: " + response.result.passages[i].field + "</button>" +
                 "<div class=\"panel\">" + 
                 "<p>" + response.result.passages[i].passage_text +"</p>" + 
                 "</div>");
         }
+
+        /*$("div#number_passages").append("Il y a " + response.result.passages.length + " passages :" + "<br /><br />");
+        for(var i = 0; i<response.result.passages.length; i++) {
+            /*if (list.find(response.result.passages[i].document_id)) {
+                alert("Bnojour");
+                continue;
+                
+            }*/
+            //$("div#results_passages").append("<button class=\"accordion\">"+ response.result.passages[i].document_id + "</button>");
+            //if (i != response.result.passages.length) {
+                /*var string = response.result.passages[i].passage_text;
+                for (var j = i + 1 ; j < response.result.passages.length; j++) {
+                    if (response.result.passages[i].document_id == response.result.passages[j].document_id) {
+                        string += response.result.passages[i].field + response.result.passages[j].passage_text;
+                    }
+                    $("div#results_passages").append("<div class=\"panel\">" + 
+                    "<p>" + string +"</p>" + 
+                    "</div>");
+                }*/
+                //list.append(response.result.passages[i].document_id);
+                //$("div#results_passages").append(list);
+                /*$("div#results_passages").append("<div class=\"panel\">" + 
+                "<p>" + string +"</p>" + 
+                "</div>");*/
+                //alert(string);
+            //}
+            //$("div#results_passages").append("<button class=\"accordion\">"+ response.result.passages[i].document_id + "<br/> Field: " + response.result.passages[i].field + "</button>" +
+        //}
 
         //Animation  Accordion
         var acc = document.getElementsByClassName("accordion");
@@ -62,8 +91,8 @@ function search_discovery() {
 }
 
 //get Field function
-function getField() {
-    var field = document.getElementById("field").value;
+function getFieldDisco(field) {
+
     if (field == "Entity Types") {
         field = "enriched_text.entities.type";
     }
@@ -83,8 +112,8 @@ function getField() {
 }
 
 //get Operator function
-function getOperator() {
-    var operator = document.getElementById("operator").value;
+function getOperatorDisco(operator) {
+
     if (operator == "is") {
         operator = "::";
     }
@@ -101,15 +130,15 @@ function getOperator() {
 }
 
 //get Value function
-function getValue() {
-    var value = document.getElementById("input_value").value;
+function getValueDisco(value) {
+
     if (value == "exclusion" || value == "exclusions") {
         value = "EXCLUSION";
     }
-    else if (value == "inclusion" || value == "inclusions") {
+    else if (value == "inclusion" || value == "inclusions" || value == "garanties") {
         value = "INCLUSION";
     }
-    else if (value == "option" || value == "options") {
+    else if (value == "option" || value == "options" || value == "garanties supplémentaires") {
         value = "OPTION";
     }
     else if (value == "plafond" || value == "plafonds") {
@@ -123,12 +152,24 @@ function getValue() {
 
 //Build Discovery Queries
 function buildQueries() {
-    //alert (getField() + getOperator()+ getValue());
+    
+    //alert(getField(field), getOperator(operator), getValue(value) , getField(field2), getOperator(operator2), getValue(value2));
+
+    var field = document.getElementById("field").value;
+    var operator = document.getElementById("operator").value;
+    var value = document.getElementById("input_value").value;
+    var field2 = document.getElementById("field2").value;
+    var operator2 = document.getElementById("operator2").value;
+    var value2 = document.getElementById("input_value2").value;
+
+    let list = [];
+
+
     var request = $.ajax({
         method: 'POST',
         url: 'http://localhost:3000/discoveryqueries',
         //data: JSON.stringify({"text": text})
-        data: {field: getField(), operator: getOperator(), value: getValue()}
+        data: {field: getFieldDisco(field), operator: getOperatorDisco(operator), value: getValueDisco(value),field2: getFieldDisco(field2), operator2: getOperatorDisco(operator2), input_value2: getValueDisco(value2)}
     });
 
     request.done((response) => {
@@ -171,7 +212,7 @@ function buildQueries() {
 
         $("div#number_passages").append("Il y a " + response.result.passages.length + " passages :" + "<br /><br />");
         for(var i = 0; i<response.result.passages.length; i++) {
-            $("div#results_passages").append("<button class=\"accordion\">" + "Document id: "+ response.result.passages[i].document_id + "<br/> Field: " + response.result.passages[i].field + "</button>" +
+            $("div#results_passages").prepend("<button class=\"accordion\">" + getDocumentTitle(response.result.passages[i].document_id) + "<br/> Field: " + response.result.passages[i].field + "</button>" +
                 "<div class=\"panel\">" + 
                 "<p>" + response.result.passages[i].passage_text +"</p>" + 
                 "</div>");
@@ -192,12 +233,12 @@ function buildQueries() {
         });
         }
 
-
     });
 
     request.fail((error) => {
         $("div#results_search").append(error);
     });
+    
 }
 
 //clear/empty fields for new query
@@ -209,11 +250,97 @@ function reset() {
     document.getElementById('results_passages').innerHTML = "";
     document.getElementById('tone_results').innerHTML = "";
     document.getElementById("input_value").value="";
-    document.getElementById('results_mongodb').innerHTML = "";
+    document.getElementById("results_mongodb").innerHTML = "";
 }
 
 function getDocumentTitle(document_id) {
     var document_title='';
+    if (document_id == "06697abe51f83dc234fd6abcaa1c0a3a") {
+        document_title = "MOBIL HOMES ET CONSTRUCTIONS LEGERES";
+    }
+    else if (document_id == "8b4fbff4cc81436e31401a897499778f") {
+        document_title = "TEMPO HABITATION EN CONSTRUCTION";
+    }
+    else if (document_id == "dd18e9714dd42cf74070497a30fa605b") {
+        document_title = "ALCYON";
+    }
+    else if (document_id == "fb99487fd7f8a0006346b344c4789465") {
+        document_title = "IMMEUBLE";
+    }
+    else if (document_id == "25222b34783c7a371aad7c017196a775") {
+        document_title = "TEMPO JEUNES";
+    }
+    else if (document_id == "e7bc203bb4b51f558d58d73b05fa72e1") {
+        document_title = "ASSURANCE MULTIRISQUE HABITATION";
+    }
+    else if (document_id == "1fc21fc69ffc7a5dabff6493156f42a4") {
+        document_title = "CHASSE";
+    }
+    else if (document_id == "2a92b9698cb41e43b0088625c36efbc0" || document_id == "792a8c9b85e60b123afcb6581e547af2" || document_id == "9cf9fa883ab2e743b2071287c89b7112") {
+        document_title = "TEMPO HABITATION";
+    }
 
     return document_title;
 }
+
+/*function addRule() {
+    $("div#disco-queries").append(
+                "<div class=\"field\">"+
+                      "<label>Field</label>"+
+                      "<select id=\"field2\" class=\"select\">"+
+                        "<option>Entity Types</option>"+
+                        "<option>Entities</option>"+
+                        "<option>Categories</option>"+
+                        "<option>Concepts</option>"+
+                        "<option>Keywords</option>"+
+                        "<option>title</option>"+
+                      "</select>"+
+                    "</div>"+
+  
+                    "<div class=\"operator\">" +
+                      "<label>Operator</label>"+
+                      "<select id=\"operator2\" class=\"select\">"+
+                        "<option>is</option>"+
+                        "<option>is not</option>"+
+                        "<option>contains</option>"+
+                       "<option>does not contain</option>"+
+                      "</select>"+
+                    "</div>"+
+  
+                    "<div class=\"value\">"+
+                      "<label>Value</label>"+
+                      "<input id=\"input_value2\" type=\"text\" placeholder=\"Enter Value\">"+
+                    "</div>"
+    );
+}
+
+function deleteRule() {
+    $("div#disco-queries").empty(
+                "<div class=\"field\">"+
+                      "<label>Field</label>"+
+                      "<select id=\"field2\" class=\"select\">"+
+                        "<option>Entity Types</option>"+
+                        "<option>Entities</option>"+
+                        "<option>Categories</option>"+
+                        "<option>Concepts</option>"+
+                        "<option>Keywords</option>"+
+                        "<option>title</option>"+
+                      "</select>"+
+                    "</div>"+
+  
+                    "<div class=\"operator\">" +
+                      "<label>Operator</label>"+
+                      "<select id=\"operator2\" class=\"select\">"+
+                        "<option>is</option>"+
+                        "<option>is not</option>"+
+                        "<option>contains</option>"+
+                       "<option>does not contain</option>"+
+                      "</select>"+
+                    "</div>"+
+  
+                    "<div class=\"value\">"+
+                      "<label>Value</label>"+
+                      "<input id=\"input_value2\" type=\"text\" placeholder=\"Enter Value\">"+
+                    "</div>"
+    );
+}*/

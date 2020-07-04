@@ -175,8 +175,9 @@
                 <h6 class="m-0 font-weight-bold text-primary">Query</h6>
               </div>
                 <div class="card-body text-gray-800">
-                  <input id="input_search" type="text" placeholder="Search..." onchange="search_mongodb(); search_discovery(); tone_analyzer()">
-                  <button onclick="reset()">Effacer</button>
+                  <input id="input_search" type="text" placeholder="Search...">
+                  <button onclick="search_mongodb(); search_discovery(); tone_analyzer();">Rechercher</button>
+                  <button onclick="reset();">Effacer</button>
 
                 </div>
               </div>
@@ -269,36 +270,65 @@
               </div>
                 <div class="card-body text-gray-800">
 
-                  <div class="field">
-                    <label>Field</label>
-                    <select id="field" class="select">
-                      <!--<input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">-->
-                      <option>Entity Types</option>
-                      <option>Entities</option>
-                      <option>Categories</option>
-                      <option>Concepts</option>
-                      <option>Keywords</option>
-                      <option>title</option>
-                    </select>
-                  </div>
+                    <div class="field">
+                      <label>Field</label>
+                      <select id="field" class="select">
+                        <option>Entity Types</option>
+                        <option>Entities</option>
+                        <option>Categories</option>
+                        <option>Concepts</option>
+                        <option>Keywords</option>
+                        <option>title</option>
+                      </select>
+                    </div>
+  
+                    <div class="operator">
+                      <label>Operator</label>
+                      <select id="operator" class="select">
+                        <option>is</option>
+                        <option>is not</option>
+                        <option>contains</option>
+                        <option>does not contain</option>
+                      </select>
+                    </div>
+  
+                    <div class="value">
+                      <label>Value</label>
+                      <input id="input_value" type="text" placeholder="Enter Value">
+                    </div>
 
-                  <div class="operator">
-                    <label>Operator</label>
-                    <select id="operator" class="select">
-                      <!--<input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">-->
-                      <option>is</option>
-                      <option>is not</option>
-                      <option>contains</option>
-                      <option>does not contain</option>
-                    </select>
-                  </div>
 
-                  <div class="value">
-                    <label>Value</label>
-                    <input id="input_value" type="text" placeholder="Enter Value">
-                  </div>
+                    <div class="field">
+                      <label>Field</label>
+                      <select id="field2" class="select">
+                        <option>Entity Types</option>
+                        <option>Entities</option>
+                        <option>Categories</option>
+                        <option>Concepts</option>
+                        <option>Keywords</option>
+                        <option>title</option>
+                      </select>
+                    </div>
+  
+                    <div class="operator">
+                      <label>Operator</label>
+                      <select id="operator2" class="select">
+                        <option>is</option>
+                        <option>is not</option>
+                        <option>contains</option>
+                        <option>does not contain</option>
+                      </select>
+                    </div>
+  
+                    <div class="value">
+                      <label>Value</label>
+                      <input id="input_value2" type="text" placeholder="Enter Value">
+                    </div>
 
-                  <button onclick="buildQueries()">Rechercher</button>
+                  <!--<a style="text-decoration: underline;" onclick="deleteRule()">- delete Rule</a>
+                  <a style="text-decoration: underline;" onclick="addRule()">+ add Rule</a>-->
+
+                  <button onclick="buildQueries(); MongoDBQueries();">Rechercher</button>
                 </div>
               </div>
 
@@ -363,8 +393,6 @@
 
   <!-- Fichiers JS -->
   <script src="./javascripts/discovery.js"></script>
-  <script src="./javascripts/toneanalyzer.js"></script>
-  <script src="./javascripts/tagcloud.js"></script>
   <script src="./javascripts/mongo.js"></script>
 
   <!-- partial -->

@@ -1,3 +1,77 @@
+const { get } = require("../../routes");
+
+//get Field function
+function getField(field) {
+
+    if (field == "Entity Types") {
+        field = "enriched_text.entities.type";
+    }
+    else if (field == "Entities") {
+        field = "enriched_text.entities.text";
+    }
+    else if (field == "Categories") {
+        field = "enriched_text.categories.label";
+    }
+    else if (field == "Concepts") {
+        field = "enriched_text.concepts.text";
+    }
+    else if (field == "Keywords") {
+        field = "enriched_text.keywords.text";
+    }
+    return field;
+}
+
+//get Operator function
+function getOperator(operator) {
+    return operator;
+}
+
+//get Value function
+function getValue(value) {
+
+    if (value == "exclusion" || value == "exclusions") {
+        value = "EXCLUSION";
+    }
+    else if (value == "inclusion" || value == "inclusions" || value == "garanties") {
+        value = "INCLUSION";
+    }
+    else if (value == "option" || value == "options" || value == "garanties supplémentaires") {
+        value = "OPTION";
+    }
+    else if (value == "plafond" || value == "plafonds") {
+        value = "PLAFOND";
+    }
+    else if (value == "formule" || value == "formules") {
+        value = "FORMULE";
+    }
+    else if (value == "formule Eco" || value == "Eco") {
+        value = "ECO";
+    }
+    else if (value == "formule Confort" || value == "Confort") {
+        value = "CONFORT";
+    }
+    else if (value == "formule Excellence" || value == "Excellence") {
+        value = "CONFORT";
+    }
+    return value;
+}
+
+function getEntity(field, operator ,value) {
+    var garantie ="";
+
+    if ((field == "Entity Types" && value == "INCLUSION") || (field == "Entity Types" && operator=="is not" && value == "EXCLUSION")) {
+        garantie = "X";
+    }
+    else if (field == "Entity Types" && value == "OPTION") {
+        garantie = "option";
+    }
+    else if ((field == "Entity Types" && value == "EXCLUSION") || (field == "Entity Types" && operator=="is not" && value == "INCLUSION")) {
+        garantie = "";
+    }
+    return garantie;
+}
+
+
 function search_mongodb() {
     var text = document.getElementById("input_search").value;
 
@@ -38,13 +112,28 @@ function search_mongodb() {
         document.getElementById("results_mongodb").innerHTML = error;
     });
 }
-function reset() {
-    document.getElementById('input_search').value = "";
-    document.getElementById('number_results').innerHTML = "";
-    document.getElementById('results_search').innerHTML = "";
-    document.getElementById('number_passages').innerHTML = "";
-    document.getElementById('results_passages').innerHTML = "";
-    document.getElementById('tone_results').innerHTML = "";
-    document.getElementById("input_value").value="";
-    document.getElementById('results_mongodb').innerText = "";
+
+function MongoDBQueries() {
+    var field = document.getElementById("field").value;
+    var operator = document.getElementById("operator").value;
+    var value = document.getElementById("input_value").value;
+    var value2 = document.getElementById("input_value2").value;
+
+    var request = $.ajax({
+        method: 'POST',
+        url: 'http://localhost:3000/mongodbqueries',
+        //data: JSON.stringify({"text": text})
+        data : {entity : getEntity(field, getOperator(operator),getValue(value)), formule : getValue(value2)}
+    });
+
+    request.done((response) => {
+        for (i = 0; i < response.length; i++) {
+            $("div#results_mongodb").append(response[i].text + "<br/>");
+        }
+        
+    });
+
+    request.fail((error) => {
+        document.getElementById("results_mongodb").innerHTML = error;
+    });
 }
