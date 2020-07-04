@@ -244,13 +244,14 @@ function buildQueries() {
 //clear/empty fields for new query
 function reset() {
     document.getElementById('input_search').value = "";
-    document.getElementById('number_results').innerHTML = "";
-    document.getElementById('results_search').innerHTML = "";
-    document.getElementById('number_passages').innerHTML = "";
-    document.getElementById('results_passages').innerHTML = "";
-    document.getElementById('tone_results').innerHTML = "";
     document.getElementById("input_value").value="";
-    document.getElementById("results_mongodb").innerHTML = "";
+    document.getElementById("input_value2").value="";
+    $('#number_results').empty();
+    $('#results_search').empty();
+    $('#number_passages').empty();
+    $('#results_passages').empty();
+    $('#results_mongodb').empty();
+    $('#tone_results').empty();
 }
 
 function getDocumentTitle(document_id) {
