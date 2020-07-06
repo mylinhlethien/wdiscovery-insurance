@@ -65,35 +65,30 @@ router.post('/mongodb', function(req, res, next) {
         ])
         .toArray(function(err, result) {
           if (err) throw err;
-          if (result[0] == undefined) {
-            res.send(result);
-          }
-          else {
-            var row_index_begin = result[0].body_cells.row_index_begin;
+          var row_index_begin = result[0].body_cells.row_index_begin;
 
-            dbo.collection("tables").aggregate([
-              { $project: {
-                  "_id": 0,
-                  "body_cells.text" : 1,
-                  "body_cells.row_index_begin" :1,
-                  "body_cells.column_header_texts" : 1
-                }},
-              { $unwind: {path: "$body_cells"} },
-              { $match: {
-                  "body_cells.row_index_begin" : row_index_begin
-                }},
-              { $group: {
-                  _id: "$body_cells.row_index_begin",
-                  body_cells : {$push : { text : "$body_cells.text", column_header_texts : "$body_cells.column_header_texts"}}
-                }}
-            ])
-            .toArray(function(err, result) {
-              if (err) throw err;
-              console.log(result[0].body_cells);
-              res.send(result[0].body_cells);
-              db.close();         
-            });
-          }
+          dbo.collection("tables").aggregate([
+            { $project: {
+                "_id": 0,
+                "body_cells.text" : 1,
+                "body_cells.row_index_begin" :1,
+                "body_cells.column_header_texts" : 1
+              }},
+            { $unwind: {path: "$body_cells"} },
+            { $match: {
+                "body_cells.row_index_begin" : row_index_begin
+              }},
+            { $group: {
+                _id: "$body_cells.row_index_begin",
+                body_cells : {$push : { text : "$body_cells.text", column_header_texts : "$body_cells.column_header_texts"}}
+              }}
+          ])
+          .toArray(function(err, result) {
+            if (err) throw err;
+            console.log(result[0].body_cells);
+            res.send(result[0].body_cells);
+            db.close();         
+          });
           
         });      
     }

@@ -1,26 +1,5 @@
 const { get } = require("../../routes");
 
-//get Field function
-function getField(field) {
-
-    if (field == "Entity Types") {
-        field = "enriched_text.entities.type";
-    }
-    else if (field == "Entities") {
-        field = "enriched_text.entities.text";
-    }
-    else if (field == "Categories") {
-        field = "enriched_text.categories.label";
-    }
-    else if (field == "Concepts") {
-        field = "enriched_text.concepts.text";
-    }
-    else if (field == "Keywords") {
-        field = "enriched_text.keywords.text";
-    }
-    return field;
-}
-
 //get Operator function
 function getOperator(operator) {
     return operator;
@@ -59,13 +38,13 @@ function getValue(value) {
 function getEntity(field, operator ,value) {
     var garantie ="";
 
-    if ((field == "Entity Types" && value == "INCLUSION") || (field == "Entity Types" && operator=="is not" && value == "EXCLUSION")) {
+    if ((field == "Entity Types" && value == "INCLUSION") || (field == "Entity Types" && operator=="is not" && value == "EXCLUSION") || (field == "Entity Types" && operator=="does not contain" && value == "EXCLUSION")) {
         garantie = "X";
     }
     else if (field == "Entity Types" && value == "OPTION") {
         garantie = "option";
     }
-    else if ((field == "Entity Types" && value == "EXCLUSION") || (field == "Entity Types" && operator=="is not" && value == "INCLUSION")) {
+    else if ((field == "Entity Types" && value == "EXCLUSION") || (field == "Entity Types" && operator=="is not" && value == "INCLUSION") || (field == "Entity Types" && operator=="does not contain" && value == "INCLUSION")) {
         garantie = "";
     }
     return garantie;
@@ -85,6 +64,7 @@ function search_mongodb() {
     request.done((response) => {
 
         $("div#results_mongodb").append(text + " : </br>");
+        // if the results provide from the first document (tableau 2.pdf)
         if (response[0].text == text) {
             for (var i = 1; i <= 3; i++) {
                 if (response[i].text == "") {
@@ -100,6 +80,7 @@ function search_mongodb() {
                 }
             }
         }
+        // if the results provide from the second document (tableau 1.pdf)
         else if (response[4].text == text) {
             for (var i = 5; i <= response.length ; i++) {
                 $("div#results_mongodb").append(response[i].text + " pour la formule "+ response[i].column_header_texts[0] + "<br/>");

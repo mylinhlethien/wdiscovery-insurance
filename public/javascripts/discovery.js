@@ -2,7 +2,7 @@
 function search_discovery() {
     var text = document.getElementById("input_search").value;
 
-    let list = [];
+    let list = new Array();
 
     var request = $.ajax({
         method: 'POST',
@@ -13,7 +13,7 @@ function search_discovery() {
 
     request.done((response) => {
 
-        $("div#number_results").append("Il y a " + response.result.results.length + " résultats de recherche :" + "<br /><br />");
+        $("div#number_results").append("Il y a " + response.result.results.length + " documents :" + "<br /><br />");
         for(var i = 0; i<response.result.results.length; i++){
             //if the document has no title
             if (response.result.results[i].title == undefined) {
@@ -34,39 +34,21 @@ function search_discovery() {
 
         $("div#number_passages").append("Il y a " + response.result.passages.length + " passages :" + "<br /><br />");
         for(var i = 0; i<response.result.passages.length; i++) {
-            $("div#results_passages").prepend("<button class=\"accordion\">" + getDocumentTitle(response.result.passages[i].document_id) + "<br/> Field: " + response.result.passages[i].field + "</button>" +
-                "<div class=\"panel\">" + 
-                "<p>" + response.result.passages[i].passage_text +"</p>" + 
+            if (list.includes(response.result.passages[i].document_id)) {
+                continue; 
+            }
+            list[i] = response.result.passages[i].document_id;
+            $("div#results_passages").append("<button class=\"accordion\">"+ getDocumentTitle(response.result.passages[i].document_id) + "</button>");
+            var passages = response.result.passages[i].field + "<br />" +response.result.passages[i].passage_text + "<br /><br />";
+            for (var j = i + 1 ; j < response.result.passages.length; j++) {
+                if (response.result.passages[i].document_id == response.result.passages[j].document_id) {
+                    passages += response.result.passages[j].field + " : <br />" + response.result.passages[j].passage_text + "<br /><br />";
+                }
+            }
+            $("div#results_passages").append("<div class=\"panel\">" + 
+                "<p>" + passages +"</p>" + 
                 "</div>");
         }
-
-        /*$("div#number_passages").append("Il y a " + response.result.passages.length + " passages :" + "<br /><br />");
-        for(var i = 0; i<response.result.passages.length; i++) {
-            /*if (list.find(response.result.passages[i].document_id)) {
-                alert("Bnojour");
-                continue;
-                
-            }*/
-            //$("div#results_passages").append("<button class=\"accordion\">"+ response.result.passages[i].document_id + "</button>");
-            //if (i != response.result.passages.length) {
-                /*var string = response.result.passages[i].passage_text;
-                for (var j = i + 1 ; j < response.result.passages.length; j++) {
-                    if (response.result.passages[i].document_id == response.result.passages[j].document_id) {
-                        string += response.result.passages[i].field + response.result.passages[j].passage_text;
-                    }
-                    $("div#results_passages").append("<div class=\"panel\">" + 
-                    "<p>" + string +"</p>" + 
-                    "</div>");
-                }*/
-                //list.append(response.result.passages[i].document_id);
-                //$("div#results_passages").append(list);
-                /*$("div#results_passages").append("<div class=\"panel\">" + 
-                "<p>" + string +"</p>" + 
-                "</div>");*/
-                //alert(string);
-            //}
-            //$("div#results_passages").append("<button class=\"accordion\">"+ response.result.passages[i].document_id + "<br/> Field: " + response.result.passages[i].field + "</button>" +
-        //}
 
         //Animation  Accordion
         var acc = document.getElementsByClassName("accordion");
@@ -164,7 +146,6 @@ function buildQueries() {
 
     let list = [];
 
-
     var request = $.ajax({
         method: 'POST',
         url: 'http://localhost:3000/discoveryqueries',
@@ -174,7 +155,7 @@ function buildQueries() {
 
     request.done((response) => {
 
-        $("div#number_results").append("Il y a " + response.result.results.length + " résultats de recherche :" + "<br /><br />");
+        $("div#number_results").append("Il y a " + response.result.results.length + " documents :" + "<br /><br />");
         for(var i = 0; i<response.result.results.length; i++){
             //if the document has no title
             if (response.result.results[i].title == undefined) {
@@ -210,11 +191,22 @@ function buildQueries() {
             }
         }
 
+
         $("div#number_passages").append("Il y a " + response.result.passages.length + " passages :" + "<br /><br />");
         for(var i = 0; i<response.result.passages.length; i++) {
-            $("div#results_passages").prepend("<button class=\"accordion\">" + getDocumentTitle(response.result.passages[i].document_id) + "<br/> Field: " + response.result.passages[i].field + "</button>" +
-                "<div class=\"panel\">" + 
-                "<p>" + response.result.passages[i].passage_text +"</p>" + 
+            if (list.includes(response.result.passages[i].document_id)) {
+                continue; 
+            }
+            list[i] = response.result.passages[i].document_id;
+            $("div#results_passages").append("<button class=\"accordion\">"+ getDocumentTitle(response.result.passages[i].document_id) + "</button>");
+            var passages = response.result.passages[i].field + "<br />" +response.result.passages[i].passage_text + "<br /><br />";
+            for (var j = i + 1 ; j < response.result.passages.length; j++) {
+                if (response.result.passages[i].document_id == response.result.passages[j].document_id) {
+                    passages += response.result.passages[j].field + " : <br />" + response.result.passages[j].passage_text + "<br /><br />";
+                }
+            }
+            $("div#results_passages").append("<div class=\"panel\">" + 
+                "<p>" + passages +"</p>" + 
                 "</div>");
         }
 
@@ -279,6 +271,12 @@ function getDocumentTitle(document_id) {
     }
     else if (document_id == "2a92b9698cb41e43b0088625c36efbc0" || document_id == "792a8c9b85e60b123afcb6581e547af2" || document_id == "9cf9fa883ab2e743b2071287c89b7112") {
         document_title = "TEMPO HABITATION";
+    }
+    else if (document_id == "0cc30e4b82fff3996861b84b3c13382b") {
+        document_title = "TEMPO ENFANTS";
+    }
+    else {
+        document_title = document_id;
     }
 
     return document_title;
