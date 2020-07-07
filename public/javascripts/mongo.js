@@ -1,11 +1,10 @@
-const { get } = require("../../routes");
-
 //get Operator function
 function getOperator(operator) {
     return operator;
 }
 
 //get Value function
+//Lecture de tableau par MongoDB exige que le texte corresponde exactement, donc on met tout en majuscule
 function getValue(value) {
 
     if (value == "exclusion" || value == "exclusions") {
@@ -30,7 +29,7 @@ function getValue(value) {
         value = "CONFORT";
     }
     else if (value == "formule Excellence" || value == "Excellence") {
-        value = "CONFORT";
+        value = "EXCELLENCE";
     }
     return value;
 }

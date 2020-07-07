@@ -27,6 +27,7 @@ router.get('/', function(req, res, next) {
   res.render('index');
 });
 
+//connexion à la base MongoDB et requêtes depuis la barre de recherche
 router.post('/mongodb', function(req, res, next) {
 
   let connectionString = "mongodb://admin:demoinsurance@10fa5bae-7e7c-44cc-a882-b0bd82c31371-0.br38q28f0334iom5lv4g.databases.appdomain.cloud:32019,10fa5bae-7e7c-44cc-a882-b0bd82c31371-1.br38q28f0334iom5lv4g.databases.appdomain.cloud:32019/ibmclouddb?authSource=admin&replicaSet=replset"
@@ -42,14 +43,8 @@ router.post('/mongodb', function(req, res, next) {
     if (err) {
         console.log(err);
     } else {
-      // lists the databases that exist in the deployment
-        /*db.db('example').admin().listDatabases(function(err, dbs) {
-            console.log(dbs.databases);
-            db.close();
-        });*/
-
-        var dbo = db.db("insurance");
-        var couverture = Object.keys(req.body)[0];
+        var dbo = db.db("insurance");   //nom de la collection MongoDB
+        var couverture = Object.keys(req.body)[0]; //texte dans la barre de recherche
 
         dbo.collection("tables").aggregate([
           { $project: {
@@ -65,8 +60,9 @@ router.post('/mongodb', function(req, res, next) {
         ])
         .toArray(function(err, result) {
           if (err) throw err;
-          var row_index_begin = result[0].body_cells.row_index_begin;
+          var row_index_begin = result[0].body_cells.row_index_begin;  //on récupère l'indice de la ligne correspondante
 
+          //requêtes MongoDB pour lire le contenu des cases de la ligne correspondante
           dbo.collection("tables").aggregate([
             { $project: {
                 "_id": 0,
@@ -95,6 +91,7 @@ router.post('/mongodb', function(req, res, next) {
   });
 });
 
+//connexion à la base MongoDB et requêtes depuis la construction de requêtes (field, operator, value)
 router.post('/mongodbqueries', function(req, res, next) {
 
   let connectionString = "mongodb://admin:demoinsurance@10fa5bae-7e7c-44cc-a882-b0bd82c31371-0.br38q28f0334iom5lv4g.databases.appdomain.cloud:32019,10fa5bae-7e7c-44cc-a882-b0bd82c31371-1.br38q28f0334iom5lv4g.databases.appdomain.cloud:32019/ibmclouddb?authSource=admin&replicaSet=replset"
@@ -112,9 +109,10 @@ router.post('/mongodbqueries', function(req, res, next) {
     } else {
 
         var dbo = db.db("insurance");
-        var garantie = Object.values(req.body)[0]
+        var garantie = Object.values(req.body)[0]  
         var formule = Object.values(req.body)[1];
 
+        //requêtes qui relève tous les indices de lignes qui correspondent à la recherche
         dbo.collection("tables").aggregate([
           { $project: {
               "_id": 0,
@@ -138,36 +136,37 @@ router.post('/mongodbqueries', function(req, res, next) {
               rows[i] = result[0].body_cells[i].row_index_begin;
             }
 
-              dbo.collection("tables").aggregate([
-                { $project: {
-                    "_id": 0,
-                    "body_cells.text" : 1,
-                    "body_cells.row_index_begin" : 1,
-                    "body_cells.column_header_texts" : 1
-                  }},
-                { $unwind: {path: "$body_cells"} },
-                { $match: {
-                    "body_cells.row_index_begin" : {$in :rows },
-                    "body_cells.column_header_texts" : "GARANTIE"
-                  }},
-                { $group : {
-                    _id: "$body_cells.column_header_texts",
-                    body_cells : {$push : {text : "$body_cells.text"}}
-                  }}
-              ])
-              .toArray( (err, results) => {
-                if (err) throw err;
-                console.log(results[0].body_cells);
-                res.send(results[0].body_cells); 
-                db.close();
-              });
+            //depuis les lignes relevées, on récupère le nom des couvertures
+            dbo.collection("tables").aggregate([
+              { $project: {
+                  "_id": 0,
+                  "body_cells.text" : 1,
+                  "body_cells.row_index_begin" : 1,
+                  "body_cells.column_header_texts" : 1
+                }},
+              { $unwind: {path: "$body_cells"} },
+              { $match: {
+                  "body_cells.row_index_begin" : {$in :rows },
+                  "body_cells.column_header_texts" : "GARANTIE"
+                }},
+              { $group : {
+                  _id: "$body_cells.column_header_texts",
+                  body_cells : {$push : {text : "$body_cells.text"}}
+                }}
+            ])
+            .toArray( (err, results) => {
+              if (err) throw err;
+              console.log(results[0].body_cells);
+              res.send(results[0].body_cells); 
+              db.close();
+            });
             
         });   
     }
   });
 });
 
-
+//requête Discovery depuis la barre de recherche
 router.post('/discovery', function(req, res, next) {
 
   discovery.query(
@@ -192,6 +191,7 @@ router.post('/discovery', function(req, res, next) {
 
 });
 
+//requête Discovery depuis la construction de requêtes Discovery
 router.post('/discoveryqueries', function(req, res, next) {
 
   discovery.query(
@@ -214,24 +214,6 @@ router.post('/discoveryqueries', function(req, res, next) {
     });
 
 });
-
-/*router.post('/toneanalyzer', function(req, res, next) {
-
-  toneAnalyzer.tone(
-    {
-      toneInput: Object.keys(req.body)[0],
-      contentType: 'text/plain'
-    })
-    .then(response => {
-      //console.log(response.result.document_tone.tone_categories[0]);
-      //console.log(JSON.stringify(response.result, null, 2));
-      res.json({result: response.result.document_tone.tone_categories[0], success: true});
-    })
-    .catch(err => {
-      console.log(err);
-    });
-
-});*/
 
 
 module.exports = router;

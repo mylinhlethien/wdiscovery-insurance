@@ -1,77 +1,4 @@
-//Discovery query using the search field
-function search_discovery() {
-    var text = document.getElementById("input_search").value;
-
-    let list = new Array();
-
-    var request = $.ajax({
-        method: 'POST',
-        url: 'http://localhost:3000/discovery',
-        //data: JSON.stringify({"text": text})
-        data : text
-    });
-
-    request.done((response) => {
-
-        $("div#number_results").append("Il y a " + response.result.results.length + " documents :" + "<br /><br />");
-        for(var i = 0; i<response.result.results.length; i++){
-            //if the document has no title
-            if (response.result.results[i].title == undefined) {
-                //$("div#results_search").append("No Title :"+ "<br />" + response.result.results[i].highlight.text + "<br /><br />");
-                $("div#results_search").append("<button class=\"accordion\">" + "No Title" + "</button>" +
-                "<div class=\"panel\">" + 
-                "<p>" + response.result.results[i].text +"</p>" +
-                "</div>");
-            }
-            else {
-                //$("div#results_search").append(response.result.results[i].title + " :"+ "<br />" + response.result.results[i].highlight.text + "<br /><br />");
-                $("div#results_search").append("<button class=\"accordion\">" + response.result.results[i].title + "</button>" +
-                "<div class=\"panel\">" + 
-                "<p>" + response.result.results[i].highlight.text +"</p>" + 
-                "</div>");
-            }
-        }
-
-        $("div#number_passages").append("Il y a " + response.result.passages.length + " passages :" + "<br /><br />");
-        for(var i = 0; i<response.result.passages.length; i++) {
-            if (list.includes(response.result.passages[i].document_id)) {
-                continue; 
-            }
-            list[i] = response.result.passages[i].document_id;
-            $("div#results_passages").append("<button class=\"accordion\">"+ getDocumentTitle(response.result.passages[i].document_id) + "</button>");
-            var passages = response.result.passages[i].field + "<br />" +response.result.passages[i].passage_text + "<br /><br />";
-            for (var j = i + 1 ; j < response.result.passages.length; j++) {
-                if (response.result.passages[i].document_id == response.result.passages[j].document_id) {
-                    passages += response.result.passages[j].field + " : <br />" + response.result.passages[j].passage_text + "<br /><br />";
-                }
-            }
-            $("div#results_passages").append("<div class=\"panel\">" + 
-                "<p>" + passages +"</p>" + 
-                "</div>");
-        }
-
-        //Animation  Accordion
-        var acc = document.getElementsByClassName("accordion");
-        var i;
-        for (i = 0; i < acc.length; i++) {
-        acc[i].addEventListener("click", function() {
-            this.classList.toggle("active");
-            var panel = this.nextElementSibling;
-            if (panel.style.display === "block") {
-            panel.style.display = "none";
-            } else {
-            panel.style.display = "block";
-            }
-        });
-        }
-
-    });
-
-    request.fail((error) => {
-        $("div#results_search").append(error);
-    });
-}
-
+//construction de requêtes avec le langage de requêtes Discovery
 //get Field function
 function getFieldDisco(field) {
 
@@ -130,6 +57,82 @@ function getValueDisco(value) {
         value = "FORMULE";
     }
     return value;
+}
+
+//Discovery query using the search field
+function search_discovery() {
+    var text = document.getElementById("input_search").value;
+
+    let list = new Array();
+
+    var request = $.ajax({
+        method: 'POST',
+        url: 'http://localhost:3000/discovery',
+        //data: JSON.stringify({"text": text})
+        data : text
+    });
+
+    request.done((response) => {
+
+        //affichage des docs
+        $("div#number_results").append("Il y a " + response.result.results.length + " documents :" + "<br /><br />");
+        for(var i = 0; i<response.result.results.length; i++){
+            //if the document has no title
+            if (response.result.results[i].title == undefined) {
+                //$("div#results_search").append("No Title :"+ "<br />" + response.result.results[i].highlight.text + "<br /><br />");
+                $("div#results_search").append("<button class=\"accordion\">" + "No Title" + "</button>" +
+                "<div class=\"panel\">" + 
+                "<p>" + response.result.results[i].text +"</p>" +
+                "</div>");
+            }
+            else {
+                //$("div#results_search").append(response.result.results[i].title + " :"+ "<br />" + response.result.results[i].highlight.text + "<br /><br />");
+                $("div#results_search").append("<button class=\"accordion\">" + response.result.results[i].title + "</button>" +
+                "<div class=\"panel\">" + 
+                "<p>" + response.result.results[i].highlight.text +"</p>" + 
+                "</div>");
+            }
+        }
+
+        //affichage des passages
+        $("div#number_passages").append("Il y a " + response.result.passages.length + " passages :" + "<br /><br />");
+        for(var i = 0; i<response.result.passages.length; i++) {
+            if (list.includes(response.result.passages[i].document_id)) {
+                continue; 
+            }
+            list[i] = response.result.passages[i].document_id;
+            $("div#results_passages").append("<button class=\"accordion\">"+ getDocumentTitle(response.result.passages[i].document_id) + "</button>");
+            var passages = response.result.passages[i].passage_text + "<br /><br />";
+            for (var j = i + 1 ; j < response.result.passages.length; j++) {
+                if (response.result.passages[i].document_id == response.result.passages[j].document_id) {
+                    passages += response.result.passages[j].passage_text + "<br /><br />";
+                }
+            }
+            $("div#results_passages").append("<div class=\"panel\">" + 
+                "<p>" + passages +"</p>" + 
+                "</div>");
+        }
+
+        //Animation Accordion/ animation des onglets
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+        for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+            panel.style.display = "none";
+            } else {
+            panel.style.display = "block";
+            }
+        });
+        }
+
+    });
+
+    request.fail((error) => {
+        $("div#results_search").append(error);
+    });
 }
 
 //Build Discovery Queries
@@ -199,10 +202,10 @@ function buildQueries() {
             }
             list[i] = response.result.passages[i].document_id;
             $("div#results_passages").append("<button class=\"accordion\">"+ getDocumentTitle(response.result.passages[i].document_id) + "</button>");
-            var passages = response.result.passages[i].field + "<br />" +response.result.passages[i].passage_text + "<br /><br />";
+            var passages = response.result.passages[i].passage_text + "<br /><br />";
             for (var j = i + 1 ; j < response.result.passages.length; j++) {
                 if (response.result.passages[i].document_id == response.result.passages[j].document_id) {
-                    passages += response.result.passages[j].field + " : <br />" + response.result.passages[j].passage_text + "<br /><br />";
+                    passages += response.result.passages[j].passage_text + "<br /><br />";
                 }
             }
             $("div#results_passages").append("<div class=\"panel\">" + 
@@ -246,6 +249,7 @@ function reset() {
     $('#tone_results').empty();
 }
 
+//affiche le titre des documents
 function getDocumentTitle(document_id) {
     var document_title='';
     if (document_id == "06697abe51f83dc234fd6abcaa1c0a3a") {
@@ -281,65 +285,3 @@ function getDocumentTitle(document_id) {
 
     return document_title;
 }
-
-/*function addRule() {
-    $("div#disco-queries").append(
-                "<div class=\"field\">"+
-                      "<label>Field</label>"+
-                      "<select id=\"field2\" class=\"select\">"+
-                        "<option>Entity Types</option>"+
-                        "<option>Entities</option>"+
-                        "<option>Categories</option>"+
-                        "<option>Concepts</option>"+
-                        "<option>Keywords</option>"+
-                        "<option>title</option>"+
-                      "</select>"+
-                    "</div>"+
-  
-                    "<div class=\"operator\">" +
-                      "<label>Operator</label>"+
-                      "<select id=\"operator2\" class=\"select\">"+
-                        "<option>is</option>"+
-                        "<option>is not</option>"+
-                        "<option>contains</option>"+
-                       "<option>does not contain</option>"+
-                      "</select>"+
-                    "</div>"+
-  
-                    "<div class=\"value\">"+
-                      "<label>Value</label>"+
-                      "<input id=\"input_value2\" type=\"text\" placeholder=\"Enter Value\">"+
-                    "</div>"
-    );
-}
-
-function deleteRule() {
-    $("div#disco-queries").empty(
-                "<div class=\"field\">"+
-                      "<label>Field</label>"+
-                      "<select id=\"field2\" class=\"select\">"+
-                        "<option>Entity Types</option>"+
-                        "<option>Entities</option>"+
-                        "<option>Categories</option>"+
-                        "<option>Concepts</option>"+
-                        "<option>Keywords</option>"+
-                        "<option>title</option>"+
-                      "</select>"+
-                    "</div>"+
-  
-                    "<div class=\"operator\">" +
-                      "<label>Operator</label>"+
-                      "<select id=\"operator2\" class=\"select\">"+
-                        "<option>is</option>"+
-                        "<option>is not</option>"+
-                        "<option>contains</option>"+
-                       "<option>does not contain</option>"+
-                      "</select>"+
-                    "</div>"+
-  
-                    "<div class=\"value\">"+
-                      "<label>Value</label>"+
-                      "<input id=\"input_value2\" type=\"text\" placeholder=\"Enter Value\">"+
-                    "</div>"
-    );
-}*/
