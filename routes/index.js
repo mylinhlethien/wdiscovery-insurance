@@ -46,6 +46,14 @@ router.post('/mongodb', function(req, res, next) {
         var dbo = db.db("insurance");   //nom de la collection MongoDB
         var couverture = Object.keys(req.body)[0]; //texte dans la barre de recherche
 
+        //dbo.collection("tables").createIndex( { "body_cells.text" : "text"} );
+        /*dbo.collection("tables").find( { $text: { $search : couverture } } )
+        .toArray(function(err, result) {
+          if (err) throw err;
+          //console.log(result[0].body_cells[2]);
+          res.send(result[0].body_cells);
+          db.close();
+        });*/
         dbo.collection("tables").aggregate([
           { $project: {
               "_id": 0,
@@ -56,37 +64,45 @@ router.post('/mongodb', function(req, res, next) {
           { $unwind: {path: "$body_cells"} },
           { $match: {
               "body_cells.text" : couverture
-            }}
+            }
+          }
         ])
         .toArray(function(err, result) {
           if (err) throw err;
-          var row_index_begin = result[0].body_cells.row_index_begin;  //on récupère l'indice de la ligne correspondante
+          if (result[0] != undefined) {
+            var row_index_begin = result[0].body_cells.row_index_begin;  //on récupère l'indice de la ligne correspondante
 
-          //requêtes MongoDB pour lire le contenu des cases de la ligne correspondante
-          dbo.collection("tables").aggregate([
-            { $project: {
-                "_id": 0,
-                "body_cells.text" : 1,
-                "body_cells.row_index_begin" :1,
-                "body_cells.column_header_texts" : 1
-              }},
-            { $unwind: {path: "$body_cells"} },
-            { $match: {
-                "body_cells.row_index_begin" : row_index_begin
-              }},
-            { $group: {
-                _id: "$body_cells.row_index_begin",
-                body_cells : {$push : { text : "$body_cells.text", column_header_texts : "$body_cells.column_header_texts"}}
-              }}
-          ])
-          .toArray(function(err, result) {
-            if (err) throw err;
-            console.log(result[0].body_cells);
-            res.send(result[0].body_cells);
-            db.close();         
-          });
-          
-        });      
+            //requêtes MongoDB pour lire le contenu des cases de la ligne correspondante
+            dbo.collection("tables").aggregate([
+              { $project: {
+                  "_id": 0,
+                  "body_cells.text" : 1,
+                  "body_cells.row_index_begin" :1,
+                  "body_cells.column_header_texts" : 1
+                }},
+              { $unwind: {path: "$body_cells"} },
+              { $match: {
+                  "body_cells.row_index_begin" : row_index_begin
+                }},
+              { $group: {
+                  _id: "$body_cells.row_index_begin",
+                  body_cells : {$push : { text : "$body_cells.text", column_header_texts : "$body_cells.column_header_texts"}}
+                }}
+            ])
+            .toArray(function(err, result) {
+              if (err) throw err;
+              console.log(result[0].body_cells);
+              res.send(result[0].body_cells);
+              db.close();         
+            });
+          }
+          else {
+            console.log("no results");
+            res.json( [{ text : "Pas de résultat"}]);
+            db.close();
+          }
+
+        });    
     }
   });
 });

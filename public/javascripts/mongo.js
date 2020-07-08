@@ -62,6 +62,11 @@ function search_mongodb() {
 
     request.done((response) => {
 
+
+        /*for (i = 0; i < response.length ; i++) {
+            $("div#results_mongodb").append(response[i].text + "</br>");
+        }*/
+
         $("div#results_mongodb").append(text + " : </br>");
         // if the results provide from the first document (tableau 2.pdf)
         if (response[0].text == text) {
@@ -85,8 +90,12 @@ function search_mongodb() {
                 $("div#results_mongodb").append(response[i].text + " pour la formule "+ response[i].column_header_texts[0] + "<br/>");
             }
         }
-        
+        //if there's no result
+        else {
+            $("div#results_mongodb").append(response[0].text);
+        }
     });
+
 
     request.fail((error) => {
         document.getElementById("results_mongodb").innerHTML = error;
@@ -107,6 +116,8 @@ function MongoDBQueries() {
     });
 
     request.done((response) => {
+
+        $("div#results_mongodb").append("<b> Les "+ getValue(value) +" de la formule " + getValue(value2) + " : </b> <br/> </br>");
         for (i = 0; i < response.length; i++) {
             $("div#results_mongodb").append(response[i].text + "<br/>");
         }
