@@ -8,6 +8,7 @@ const MongoClient = require("mongodb").MongoClient;
 const ToneAnalyzerV3 = require('ibm-watson/tone-analyzer/v3');
 const DiscoveryV1 = require('ibm-watson/discovery/v1');
 const { IamAuthenticator } = require('ibm-watson/auth');
+const { ObjectId } = require('mongodb');
 
 const discovery = new DiscoveryV1({
   authenticator: new IamAuthenticator({ apikey: process.env.DISCOVERY_IAM_APIKEY }),
@@ -56,14 +57,15 @@ router.post('/mongodb', function(req, res, next) {
         });*/
         dbo.collection("tables").aggregate([
           { $project: {
-              "_id": 0,
+              "_id": 1,
               "body_cells.text" : 1,
               "body_cells.row_index_begin" :1,
               "body_cells.column_header_texts" : 1
             }},
           { $unwind: {path: "$body_cells"} },
           { $match: {
-              "body_cells.text" : couverture
+              "body_cells.text" : { $regex : new RegExp(couverture, 'i') } //For substring search, case insensitive
+              //"body_cells.text" : { $regex : new RegExp('^' + couverture + '$', 'i') } //For exact search, case insensitive
             }
           }
         ])
@@ -71,18 +73,20 @@ router.post('/mongodb', function(req, res, next) {
           if (err) throw err;
           if (result[0] != undefined) {
             var row_index_begin = result[0].body_cells.row_index_begin;  //on récupère l'indice de la ligne correspondante
+            var id = result[0]._id;
 
             //requêtes MongoDB pour lire le contenu des cases de la ligne correspondante
             dbo.collection("tables").aggregate([
               { $project: {
-                  "_id": 0,
+                  "_id": 1,
                   "body_cells.text" : 1,
                   "body_cells.row_index_begin" :1,
                   "body_cells.column_header_texts" : 1
                 }},
               { $unwind: {path: "$body_cells"} },
               { $match: {
-                  "body_cells.row_index_begin" : row_index_begin
+                  "body_cells.row_index_begin" : row_index_begin,
+                  _id : id
                 }},
               { $group: {
                   _id: "$body_cells.row_index_begin",
@@ -98,11 +102,11 @@ router.post('/mongodb', function(req, res, next) {
           }
           else {
             console.log("no results");
-            res.json( [{ text : "Pas de résultat"}]);
+            res.json( [{text:"Pas de résultat"}]);
             db.close();
           }
 
-        });    
+        });   
     }
   });
 });
@@ -147,36 +151,43 @@ router.post('/mongodbqueries', function(req, res, next) {
           }}
         ]).toArray(function(err, result) {
             if (err) throw err;
-            var rows = new Array();
-            for ( i = 0 ; i < result[0].body_cells.length; i++) {
-              rows[i] = result[0].body_cells[i].row_index_begin;
-            }
+            if (result[0] != undefined) {
+              var rows = new Array();
+              for ( i = 0 ; i < result[0].body_cells.length; i++) {
+                rows[i] = result[0].body_cells[i].row_index_begin;
+              }
 
-            //depuis les lignes relevées, on récupère le nom des couvertures
-            dbo.collection("tables").aggregate([
-              { $project: {
-                  "_id": 0,
-                  "body_cells.text" : 1,
-                  "body_cells.row_index_begin" : 1,
-                  "body_cells.column_header_texts" : 1
-                }},
-              { $unwind: {path: "$body_cells"} },
-              { $match: {
-                  "body_cells.row_index_begin" : {$in :rows },
-                  "body_cells.column_header_texts" : "GARANTIE"
-                }},
-              { $group : {
-                  _id: "$body_cells.column_header_texts",
-                  body_cells : {$push : {text : "$body_cells.text"}}
-                }}
-            ])
-            .toArray( (err, results) => {
-              if (err) throw err;
-              console.log(results[0].body_cells);
-              res.send(results[0].body_cells); 
+              //depuis les lignes relevées, on récupère le nom des couvertures
+              dbo.collection("tables").aggregate([
+                { $project: {
+                    "_id": 0,
+                    "body_cells.text" : 1,
+                    "body_cells.row_index_begin" : 1,
+                    "body_cells.column_header_texts" : 1
+                  }},
+                { $unwind: {path: "$body_cells"} },
+                { $match: {
+                    "body_cells.row_index_begin" : {$in :rows },
+                    "body_cells.column_header_texts" : "GARANTIE"
+                  }},
+                { $group : {
+                    _id: "$body_cells.column_header_texts",
+                    body_cells : {$push : {text : "$body_cells.text"}}
+                  }}
+              ])
+              .toArray( (err, results) => {
+                if (err) throw err;
+                console.log(results[0].body_cells);
+                res.send(results[0].body_cells); 
+                db.close();
+              });
+            }
+            else {
+              console.log("no results");
+              res.json( [{ text : "Pas de résultat"}]);
               db.close();
-            });
-            
+            }
+    
         });   
     }
   });

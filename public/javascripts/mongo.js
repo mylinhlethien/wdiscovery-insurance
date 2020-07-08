@@ -61,16 +61,17 @@ function search_mongodb() {
     });
 
     request.done((response) => {
-
-
-        /*for (i = 0; i < response.length ; i++) {
-            $("div#results_mongodb").append(response[i].text + "</br>");
-        }*/
-
-        $("div#results_mongodb").append(text + " : </br>");
-        // if the results provide from the first document (tableau 2.pdf)
-        if (response[0].text == text) {
-            for (var i = 1; i <= 3; i++) {
+ 
+        $("div#results_mongodb").append("<b>" + response[0].text + "</br> <b/>");
+        if (response[0].column_header_texts[0] == "LIMITES PARTICULIÈRES") {
+            $("div#results_mongodb").append(response[0].column_header_texts[0] + "<br/>");
+            for (var i = 1; i <= response.length ; i++) {
+                $("div#results_mongodb").append(response[i].text + " pour la formule "+ response[i].column_header_texts[0] + "<br/>");
+            }
+        }
+        else if (response[0].column_header_texts[0] == "GARANTIE") {
+            $("div#results_mongodb").append(response[0].column_header_texts + "<br/>");
+            for (var i = 1; i <= response.length; i++) {
                 if (response[i].text == "") {
                     $("div#results_mongodb").append("Non couvert dans la formule " + response[i].column_header_texts[0] + "<br/>");
                 }
@@ -84,14 +85,7 @@ function search_mongodb() {
                 }
             }
         }
-        // if the results provide from the second document (tableau 1.pdf)
-        else if (response[4].text == text) {
-            for (var i = 5; i <= response.length ; i++) {
-                $("div#results_mongodb").append(response[i].text + " pour la formule "+ response[i].column_header_texts[0] + "<br/>");
-            }
-        }
-        //if there's no result
-        else {
+        if (response[0].text == "Pas de résultat") {
             $("div#results_mongodb").append(response[0].text);
         }
     });
@@ -117,11 +111,16 @@ function MongoDBQueries() {
 
     request.done((response) => {
 
-        $("div#results_mongodb").append("<b> Les "+ getValue(value) +" de la formule " + getValue(value2) + " : </b> <br/> </br>");
-        for (i = 0; i < response.length; i++) {
-            $("div#results_mongodb").append(response[i].text + "<br/>");
+        if (response[0].text == "Pas de résultat") {
+            $("div#results_mongodb").append(response[0].text);
         }
-        
+        else {
+            $("div#results_mongodb").append("<b> Les "+ getValue(value) +" de la formule " + getValue(value2) + " : </b> <br/> </br>");
+            for (i = 0; i < response.length; i++) {
+                $("div#results_mongodb").append(response[i].text + "<br/>");
+            }
+        }
+
     });
 
     request.fail((error) => {
