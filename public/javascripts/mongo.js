@@ -85,6 +85,7 @@ function search_mongodb() {
                 }
             }
         }
+
         if (response[0].text == "Pas de résultat") {
             $("div#results_mongodb").append(response[0].text);
         }

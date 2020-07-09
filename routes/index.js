@@ -71,7 +71,18 @@ router.post('/mongodb', function(req, res, next) {
         ])
         .toArray(function(err, result) {
           if (err) throw err;
+          console.log(result);
           if (result[0] != undefined) {
+
+            /*var rows = new Array();
+            for ( i = 0 ; i < result.length; i++) {
+              rows[i] = result[i].body_cells.row_index_begin;
+            }
+            var ids = new Array();
+            for ( i = 0 ; i < result.length; i++) {
+              ids[i] = ObjectId(result[i]._id);
+            }*/
+            
             var row_index_begin = result[0].body_cells.row_index_begin;  //on récupère l'indice de la ligne correspondante
             var id = result[0]._id;
 
@@ -85,17 +96,20 @@ router.post('/mongodb', function(req, res, next) {
                 }},
               { $unwind: {path: "$body_cells"} },
               { $match: {
+                  /*"body_cells.row_index_begin" : {$in :rows },
+                  _id : {$in :ids }*/
                   "body_cells.row_index_begin" : row_index_begin,
                   _id : id
                 }},
               { $group: {
                   _id: "$body_cells.row_index_begin",
-                  body_cells : {$push : { text : "$body_cells.text", column_header_texts : "$body_cells.column_header_texts"}}
+                  body_cells : {$push : {doc_id : "$_id",text : "$body_cells.text", column_header_texts : "$body_cells.column_header_texts"}}
                 }}
             ])
             .toArray(function(err, result) {
               if (err) throw err;
-              console.log(result[0].body_cells);
+              /*res.json([ {doc_ids : ids} , result ]);
+              console.log([ {doc_ids : ids} , result ]);*/
               res.send(result[0].body_cells);
               db.close();         
             });

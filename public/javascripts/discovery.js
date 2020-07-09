@@ -75,7 +75,7 @@ function search_discovery() {
     request.done((response) => {
 
         //affichage des docs
-        $("div#number_results").append("Il y a " + response.result.results.length + " documents :" + "<br /><br />");
+        /*$("div#number_results").append("Il y a " + response.result.results.length + " documents :" + "<br /><br />");
         for(var i = 0; i<response.result.results.length; i++){
             //if the document has no title
             if (response.result.results[i].title == undefined) {
@@ -92,7 +92,7 @@ function search_discovery() {
                 "<p>" + response.result.results[i].highlight.text +"</p>" + 
                 "</div>");
             }
-        }
+        }*/
 
         //affichage des passages
         $("div#number_passages").append("Il y a " + response.result.passages.length + " passages :" + "<br /><br />");
@@ -158,7 +158,7 @@ function buildQueries() {
 
     request.done((response) => {
 
-        $("div#number_results").append("Il y a " + response.result.results.length + " documents :" + "<br /><br />");
+        /*$("div#number_results").append("Il y a " + response.result.results.length + " documents :" + "<br /><br />");
         for(var i = 0; i<response.result.results.length; i++){
             //if the document has no title
             if (response.result.results[i].title == undefined) {
@@ -192,7 +192,7 @@ function buildQueries() {
                 }
                 
             }
-        }
+        }*/
 
 
         $("div#number_passages").append("Il y a " + response.result.passages.length + " passages :" + "<br /><br />");
