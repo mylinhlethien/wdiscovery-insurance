@@ -62,7 +62,7 @@ function search_mongodb() {
 
     request.done((response) => {
  
-        $("div#results_mongodb").append("<b>" + response[0].text + "</br> <b/>");
+        /*$("div#results_mongodb").append("<b>" + response[0].text + "<br/> <b/>");
         if (response[0].column_header_texts[0] == "LIMITES PARTICULIÈRES") {
             $("div#results_mongodb").append(response[0].column_header_texts[0] + "<br/>");
             for (var i = 1; i <= response.length ; i++) {
@@ -81,6 +81,34 @@ function search_mongodb() {
                     }
                     else {
                         $("div#results_mongodb").append("Couvert dans la formule " + response[i].column_header_texts[0] + "<br/>");
+                    }
+                }
+            }
+        }*/
+
+        //response[0].doc_ids (liste des ids des docs)
+        //response[0].doc_ids.length (nb de docs ids) == response[1].length (nb de docs)
+        //response[0][i] pour parcourir tous les docs
+        //response[1][i].body_cells pour avoir les cellules de chaque doc
+        //response[1][i].body_cells.length (nb de cellules récupérées, généralement = 8)
+        //response[1][i].body_cells[j ou 8].doc_id (doc_id de la cellule donc à comparer avec response[0].doc_ids[i])
+
+        var number_documents = response[0].doc_ids.length;
+        for (i = 0; i < number_documents; i++) {
+            for (j = 0; j < response[1][i].body_cells.length ; j++) {
+                if (response[1][i].body_cells[j].doc_id == response[0].doc_ids[i]) {
+                    
+                    if (response[1][i].body_cells[j].text == "") {
+                        $("div#results_mongodb").append("Non couvert dans la formule " + response[1][i].body_cells[j].column_header_texts[0] + "<br/>");
+                    }
+                    else if (response[1][i].body_cells[j].text == "option") {
+                        $("div#results_mongodb").append("En option dans la formule " + response[1][i].body_cells[j].column_header_texts[0] + "<br/>");
+                    }
+                    else if (response[1][i].body_cells[j].text == "X") {
+                        $("div#results_mongodb").append("Couvert dans la formule " + response[1][i].body_cells[j].column_header_texts[0] + "<br/>");
+                    }
+                    else {
+                        $("div#results_mongodb").append("<b>"+response[1][i].body_cells[j].text + " - "+ response[1][i].body_cells[j].column_header_texts[0]+  " <br/> <b/>");
                     }
                 }
             }
