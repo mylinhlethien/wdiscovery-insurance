@@ -105,8 +105,7 @@ router.post('/mongodb', function(req, res, next) {
             .toArray(function(err, result) {
               if (err) throw err;
               res.json([ {doc_ids : ids} , result ]);
-              console.log([ {doc_ids : ids} , result ]);
-              //res.send(result[0].body_cells);
+              //console.log([ {doc_ids : ids} , result ]);
               db.close();         
             });
           }
