@@ -39,14 +39,6 @@ router.post('/mongodb', function(req, res, next) {
         var dbo = db.db("insurance");   //nom de la collection MongoDB
         var couverture = Object.keys(req.body)[0]; //texte dans la barre de recherche
 
-        //dbo.collection("tables").createIndex( { "body_cells.text" : "text"} );
-        /*dbo.collection("tables").find( { $text: { $search : couverture } } )
-        .toArray(function(err, result) {
-          if (err) throw err;
-          //console.log(result[0].body_cells[2]);
-          res.send(result[0].body_cells);
-          db.close();
-        });*/
         dbo.collection("tables").aggregate([
           { $project: {
               "_id": 1,
@@ -96,6 +88,7 @@ router.post('/mongodb', function(req, res, next) {
                 }},
               { $group: {
                   _id: "$body_cells.row_index_begin",
+                  document_contrat : {$push : {document_contrat : "$document_contrat"}},
                   body_cells : {$push : {doc_id : "$_id",text : "$body_cells.text", column_header_texts : "$body_cells.column_header_texts"}}
                 }},
               { $sort : {
@@ -182,13 +175,14 @@ router.post('/mongodbqueries', function(req, res, next) {
                   }},
                 { $group : {
                     _id: "$body_cells.column_header_texts",
-                    body_cells : {$push : {text : "$body_cells.text"}}
+                    body_cells : {$push : {text : "$body_cells.text"}},
+                    document_contrat : {$push : {document_contrat : "$document_contrat"}}
                   }}
               ])
               .toArray( (err, results) => {
                 if (err) throw err;
-                console.log(results[0].body_cells);
-                res.send(results[0].body_cells); 
+                //console.log(results);
+                res.send(results); 
                 db.close();
               });
             }
