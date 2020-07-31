@@ -70,7 +70,7 @@ function search_mongodb() {
         //response[1][i].body_cells[j ou 8].doc_id (doc_id de la cellule donc à comparer avec response[0].doc_ids[i])
 
         var number_documents = response[0].doc_ids.length; //nombre de résultats/documents
-        $("div#results_mongodb").append("<b>"+ response[1][0].document_contrat[0].document_contrat + " <b/> <br/>");
+        $("div#results_mongodb").append("<b>"+ response[1][0].document_contrat[0].document_contrat + " <b/> <br/> <br/>");
         for (i = 0; i < number_documents; i++) {
             for (j = 0; j < response[1][i].body_cells.length ; j++) {  //on parcourt les cellules de chaque résultat/document
                 if (response[1][i].body_cells[j].doc_id == response[0].doc_ids[i]) {  //on vérifie que l'id du document correspond pour ne pas se tromper de cellules du tableau

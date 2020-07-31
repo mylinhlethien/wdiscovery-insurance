@@ -23,7 +23,7 @@ router.get('/', function(req, res, next) {
 //connexion à la base MongoDB et requêtes depuis la barre de recherche
 router.post('/mongodb', function(req, res, next) {
 
-  let connectionString = "mongodb://admin:demoinsurance@10fa5bae-7e7c-44cc-a882-b0bd82c31371-0.br38q28f0334iom5lv4g.databases.appdomain.cloud:32019,10fa5bae-7e7c-44cc-a882-b0bd82c31371-1.br38q28f0334iom5lv4g.databases.appdomain.cloud:32019/ibmclouddb?authSource=admin&replicaSet=replset"
+  let connectionString = process.env.CONNECTION_STRING
 
   let options = {
     tls: true,
@@ -67,8 +67,8 @@ router.post('/mongodb', function(req, res, next) {
               ids[i] = ObjectId(result[i]._id);
             }
             
-            var row_index_begin = result[0].body_cells.row_index_begin;  //on récupère l'indice de la ligne correspondante
-            var id = result[0]._id;
+            //var row_index_begin = result[0].body_cells.row_index_begin;  //on récupère l'indice de la ligne correspondante
+            //var id = result[0]._id;
 
             //requêtes MongoDB pour lire le contenu des cases de la ligne correspondante
             dbo.collection("tables").aggregate([
